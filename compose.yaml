@@ -1,0 +1,30 @@
+services:
+  agent:
+    build: .
+    image: research-dev-agent:latest
+    init: true
+    stdin_open: true
+    tty: true
+    working_dir: /workspace/project
+    volumes:
+      - ${PROJECT_REPO:-/tmp/research-agent-empty}:/workspace/project
+      - research-agent-home:/home/agent
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 512
+    mem_limit: 12g
+    cpus: 6
+    networks:
+      - agent-network
+
+volumes:
+  research-agent-home:
+    external: true
+    name: research-agent-home
+
+networks:
+  agent-network:
+    external: true
+    name: ${AGENT_NETWORK:-research-agent-network}
